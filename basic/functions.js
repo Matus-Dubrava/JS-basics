@@ -365,7 +365,7 @@ console.log(arr2);
 // taking an arbitrary function compatible with it an applying this function on
 // each entry (and let's give it a more general name, 'map' sounds about right).
 
-const map1 = function(arr, cb) {
+const map = function(arr, cb) {
   for (let i = 0; i < arr.length; i++) {
     arr[i] = cb(arr[i]);
   }
@@ -376,7 +376,7 @@ const add100 = function(x) {
 };
 
 const arr3 = [1, 2, 3];
-map1(arr3, add100);
+map(arr3, add100);
 console.log(arr3);
 
 // If 'add100' will be reused anymore (which it probably won't since it is really
@@ -385,7 +385,7 @@ console.log(arr3);
 
 const arr4 = [1, 2, 3];
 
-map1(arr4, function(x) {
+map(arr4, function(x) {
   return x + 100;
 });
 
