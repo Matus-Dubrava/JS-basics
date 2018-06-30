@@ -400,8 +400,8 @@ console.log(arr4);
 // instead it returns a new modified one keeping the original intact.
 // Another difference is that it is a method, so it needs an array as its execution
 // context (our function doesn't work with and doesn't need any specific execution context).
-// There is also a difference in signature of these two functions but let's cut it
-// here, see some quick example and return to this topic when later.
+// There is also a difference in signatures of these two functions but let's cut it
+// here, see some quick example and return to this topic later.
 
 const arr5 = [1, 2, 3];
 const newArray = arr5.map(function(v) {
@@ -409,5 +409,135 @@ const newArray = arr5.map(function(v) {
 });
 
 console.log(newArray);
+
+})();
+
+// -----------------------------------------------------------------------------
+
+(() => {
+// PASSING FUNCTION AS AN ARGUMENT TO ASYNCHRONOUS FUNCTION
+// We have already seen how we can pass one function to another one as
+// a callback to simplify our code and make the functions more reusable but
+// there are cases when it would be really hard to work witout this pattern, that
+// is, asynchronous programming.
+
+// You may say that JavaScript is an event driven programming language it solves many
+// tasks asynchronously. Let's start with a simple example of
+// 'setTimeout' function which takes two arguments, callback and a delay and
+// all it does is that it executes the provided callback after certain amount
+// of time has passed which is given by the delay argument (it is actually more
+// complicated than that and we should probably say that it is guaranteed that
+// the callback will not be executed sooner then we specify by the delay argument
+// and it has to do with how JavaScript really works, but for that we would
+// need to know about call stack, web/node apis, callback queue and event loop, which
+// is an advanced topic that we will discuss fully much later).
+// So here is our first example.
+
+setTimeout(function () {
+  console.log('log after one second');
+}, 1000);
+
+// Here we are passing an anonymous function to the 'setTimeout' to postpone its
+// execution. It might not be obvious why we would want to do that in a first place,
+// but let's wait a bit and see how we can pass a function that we have already
+// declared somewhere in our code to this 'setTimeout'.
+
+const sayHello = function() {
+  console.log('hello');
+};
+
+setTimeout(sayHello, 1000);
+
+// This works as expected, now let;s make things a little bit more complicated
+// and pass some arguments to such callback.
+
+const sayHelloToSomeone = function(who) {
+  console.log(`hello ${who}`);
+};
+
+try {
+  setTimeout(sayHelloToSomeone('Sue'), 1000);
+} catch (e) {
+  console.log(e.name);
+}
+
+// This will not work as expected and depending on the environment in which
+// we run this code, we will might get an error. But we can still see that
+// string 'hello Sue' is printed right away and it doesn't wait that specified
+// one second. The reason behind this is that first parameter of 'setTimeout'
+// expect a function but we are actually executing the 'sayHelloToSomeone' right
+// away and instead of function, we are passing 'undefined' (implicit return) to
+// the 'setTimeout'. This is actually a common gotcha and a favorite question
+// during interviews.
+
+// So how do we solve it, how do we pass arguments to function without calling it?
+// Well, there are two approaches to this problem. We can either pass a diffrent,
+// anonymous function to the 'setTimeout' and execute 'sayHelloToSomeone' inside
+// of its body in a normal way, or we can use a technique from functional programming
+// called partial application.
+
+// Let's start with the first approach, that is, using another anonymous function.
+
+setTimeout(function() {
+  sayHelloToSomeone('Sue');
+}, 1000);
+
+// And for the second approach, JavaScript implements a method on Function prototype
+// called 'bind' (Function.prototype.bind), first argument provided to it is used to bind an
+// execution context to the function (we will pass 'null' here as our function
+// doesn't need any specific execution context) and the next arguments are partially
+// applied to the provided function. Bind returns a new function that is just
+// like the original one but it reduces its arity and hard-binds the specified
+// arguments as well as execution context (in reality, it is more complicated than
+// that, the returned function is what is called an exotic object which doesn't have
+// a prototype anymore and its execution context can't be rebound but this
+// is something that we don't need to care about most of the time).
+
+setTimeout(sayHelloToSomeone.bind(null, 'sue'), 1000);
+
+// Let's step move one and consider 'addEventListener' method (in case that we
+// are running JavaScript in browser) that listens for a
+// specific event and takes callback that handles the event, usually called
+// event handler.
+
+(() => {
+  const $shoppingCart = document.querySelector('#shoppingCart');
+
+  $shoppingCart.addEventListener('click', function() {
+    // handle the event which is triggered by user clicking on
+    // our shopping cart
+  });
+});
+
+// In this case, we don't specify when exacly the event will happen, it might
+// not happen at all. What we are doing is that we are just saying something along
+// the line - hey JavaScript, if this event occurs one day, be prepared
+// and execute this kind of logic (prvided callback).
+
+// Another example, from the Node.js environment this time, would be to read a content of a
+// file. Tasks like this, you may say IO tasks, are considered slow and for
+// us to be able to handle them effectively, we can either run them concurrently in a different
+// exection threads (well... we can't, JavaScipt is single threaded, sorry) or
+// we can run them asynchronously (this is where JavaScipt really shines).
+
+(() => {
+  const fs = require('fs');
+
+  fs.readFile('path-to-your-file', 'utf-8', function(err, data) {
+    if (err) {
+      // some error occured and JavaScipt wasn't able to read the file
+      console.log(err);
+    } else {
+      // do whatever you want to do with the obtainded data
+      console.log(data);
+    }
+  });
+});
+
+// Here we are requiring the 'fs' filesystem module and useing its 'readFile' method
+// which takes three arguments - path to the file we want to read, encoding and
+// the most interesting one, callback. This callback, again, is executed once JavaScript
+// is done with reading of that file, it takes has two parameters - error, and data
+// and we can either handle the error if there is some, or handle the obtained data.
 
 })();
