@@ -303,6 +303,70 @@ console.log(betterCounter6()); // <- prints 10
 console.log(betterCounter6()); // <- prints 11
 console.log(betterCounter6()); // <- prints 12
 
+// Another use case for IIFE is when we want to create a module, or API if
+// you will, such that only a specific set of functions is visible to the
+// consumer of our module. Why is it a good thing to hide some functionality
+// from the external world? If you expose every function of your API, then you
+// can't change them to work differenly (meaning that you can't change their
+// signatures or their return values) because you would probably break code
+// of the others that are using this API. Let's take an example in which
+// we create a simple API that
+
+const API1 = (function() {
+
+  const _letters = 'abcdefghiklmnopqrstuvwxyz';
+
+  const _isLetter = function(char) {
+    if (Array.from(_letters).includes(char.toLowerCase())) {
+      return true;
+    }
+    return false;
+  }
+
+  const getLetters = function(str) {
+    let result = '';
+    for (let i = 0; i < str.length; i++) {
+      if (_isLetter(str[i])) {
+        result += str[i];
+      }
+    }
+    return result;
+  }
+
+  return {
+    getLetters
+  };
+})();
+
+const someText = '123Ab45xy';
+console.log(API1.getLetters(someText));
+
+// This works but in future, we might decide to change our API, simplify it and remove the
+// helper function completly (for whatever reason).
+
+const API2 = (function() {
+
+  const getLetters = function(str) {
+    return Array.from(str)
+                .filter(char => /[a-z]/i.test(char))
+                .join('');
+  }
+
+  return {
+    getLetters
+  };
+})();
+
+console.log(API2.getLetters(someText));
+
+// You can say that we have drastically changed the underlying logic of
+// our API, but from the perspective of the external consumer, the API wasn't
+// changed at all. All she sees in both version is just one function 'getLetters' that
+// expects a string and returns a filtered string that contains only letters.
+// On the other hand, if we have exposed '_isLetter' function or '_letters'
+// string, we wouldn't be able to remove them because someone might be
+// aleady using them and by removing them, we would break that person's code.
+
 })();
 
 // -----------------------------------------------------------------------------
@@ -379,7 +443,7 @@ const arr3 = [1, 2, 3];
 map(arr3, add100);
 console.log(arr3);
 
-// If 'add100' will be reused anymore (which it probably won't since it is really
+// If 'add100' will not be reused anymore (which it probably won't since it is really
 // too specific), we can omit declaration of that function and pass an
 // anonymous function expression to our mapping function.
 
@@ -463,9 +527,9 @@ try {
 
 // This will not work as expected and depending on the environment in which
 // we run this code, we will might get an error. But we can still see that
-// string 'hello Sue' is printed right away and it doesn't wait that specified
-// one second. The reason behind this is that first parameter of 'setTimeout'
-// expect a function but we are actually executing the 'sayHelloToSomeone' right
+// string 'hello Sue' is printed right away, it doesn't wait that specified
+// one second. The reason behind this is that the first parameter of 'setTimeout'
+// expects a function but we are actually executing the 'sayHelloToSomeone' right
 // away and instead of function, we are passing 'undefined' (implicit return) to
 // the 'setTimeout'. This is actually a common gotcha and a favorite question
 // during interviews.
@@ -474,7 +538,9 @@ try {
 // Well, there are two approaches to this problem. We can either pass a diffrent,
 // anonymous function to the 'setTimeout' and execute 'sayHelloToSomeone' inside
 // of its body in a normal way, or we can use a technique from functional programming
-// called partial application.
+// called partial application (yet another approach would be to use a technique
+// called currying which is closely related to partial application but we will
+// visit it later as it is more advanced stuff).
 
 // Let's start with the first approach, that is, using another anonymous function.
 
@@ -496,7 +562,7 @@ setTimeout(function() {
 setTimeout(sayHelloToSomeone.bind(null, 'sue'), 1000);
 
 // Let's step move one and consider 'addEventListener' method (in case that we
-// are running JavaScript in browser) that listens for a
+// are running JavaScript in a browser) that listens for a
 // specific event and takes callback that handles the event, usually called
 // event handler.
 
