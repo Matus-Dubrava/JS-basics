@@ -172,10 +172,10 @@ try {
 
 // arrow function can't be used as a constructor function even is we improve it
 // as mentioned before to not use 'new' operator because there is not prototype
-// object created and associated to arrow functions
+// object created and associated with arrow functions
 
 const Person2 = (name, age) => {
-  const obj = Object.create(Person2.prototype);
+  const obj = Object.create(Person2.prototype); // <- Person2.prototype is undefined
   obj.name = name;
   obj.age = age;
   return obj;
@@ -192,9 +192,9 @@ try {
 })(); //------------------------------------------------------------
 
 (() => { //---------------------------------------------------------
-// BE AWARE OF 2.: using arrow function to define method on a function prototype
+// BE AWARE OF 2.: using arrow function to define a method on a function prototype
 // will fail because arrow function doesn't have its own 'this' (you may say that
-// it takes this from its enclosing scope or that it uses lexical 'this')
+// it takes 'this' from its enclosing scope or that it uses lexical 'this')
 
 function Person(name, age) {
   const obj = Object.create(Person.prototype);
@@ -209,5 +209,18 @@ Person.prototype.getDescription = () => {
 
 const sue = new Person('sue', 20);
 console.log(sue.getDescription()); // <- here we get "Person undefined, undefined"
+                                   // because 'this' in this case points to the
+                                   // execution context of the enclosing scope
+                                   // instead of our person which
+                                   // doesn't have properties name and age
+
+// we can verify the previous claim about 'this' pointing to the enclosing
+// scope's execution context by associating the mentioned properties with it.
+
+this.name = 'enclosing-Sue';
+this.age = 'enclosing-20';
+console.log(sue.getDescription()); // <- prints "Person enclosing-Sue, enclosing-20"
+
+
 
 })(); //------------------------------------------------------------
