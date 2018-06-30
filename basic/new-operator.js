@@ -222,3 +222,54 @@ this.age = 'enclosing-20';
 console.log(sue.getDescription()); // <- prints "Person enclosing-Sue, enclosing-20"
 
 })(); //------------------------------------------------------------
+
+(() => { //---------------------------------------------------------
+// BE AWARE OF 3.: Things can be simplified if we don't need a custom
+// prototype (just be sure to understand that the newly created object will
+// still have the default object prototype)
+
+function Person1(name, age) {
+  return {
+    name: name,
+    age: age
+  };
+}
+
+const sue1 = Person1('sue', 20);
+console.log(sue1);
+
+// which can be simplified even more using object properties shorthand notation
+
+function Person2(name, age) {
+  return {
+    name,
+    age
+  };
+}
+
+const sue2 = Person2('sue', 20);
+console.log(sue2);
+
+// and since we are not relying on 'new', 'this' or prototype in this case, we
+// can also use arrow function
+
+const Person3 = (name, age) => {
+  return {
+    name,
+    age
+  };
+};
+
+const sue3 = Person3('sue', 20);
+console.log(sue3);
+
+// and to simplify it even more, we can omit return statement and curly braces
+// defining the function block but we need to wrap the object to be returned with
+// parenthesis so that it is recognized as an object an not as a function block
+
+const Person4 = (name, age) => ({ name, age });
+
+const sue4 = Person4('sue', 20);
+console.log(sue3);
+
+})(); //------------------------------------------------------------
