@@ -311,3 +311,32 @@ console.log(Object.getPrototypeOf(sue)); // <- in this case, sue's prototype is 
                                          // the default object prototype
 
 })();
+
+// -----------------------------------------------------------------------------
+
+(() => {
+// BE AWARE OF 5.: we have solved the problem with missing 'new' operator when
+// expected by simply removing it from the equation completly, and while that is
+// the prefered way in may opinion, we can solve it also by checking whether the
+// function was invoked correcly with the 'new' operator, and if not then just add
+// it programatically
+
+function Person(name, age) {
+
+  if (!(this instanceof Person)) {
+    return new Person(name, age);
+  }
+
+  this.name = name;
+  this.age = age;
+}
+
+const sue1 = new Person('sue', 20);
+console.log(sue1);
+
+const sue2 = Person('sue', 20);
+console.log(sue2);
+
+// both of these calls have the desired behavior
+
+})();
