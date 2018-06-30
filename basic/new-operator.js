@@ -1,3 +1,5 @@
+"use strict";
+
 (() => { //-----------------------------------------------------
 // defining a constructor function
 function Person(name, age) {
@@ -57,7 +59,7 @@ console.log(sue.getDescription());
 // but no new object will be created and 'this' will point to the
 // global object (window or global depending on the environment in
 // which we run the code) and new properties will be added to this object
-// (if we are in a strict mode then we will get an error instead since)
+// (if we are in a strict mode then we will get an error instead)
 
 function Person(name, age) {
   this.name = name;
@@ -73,7 +75,7 @@ const sue = Person('sue', 20);
 try {
   console.log(sue.name);
 } catch (e) {
-  console.log(e.name); // <- TypeError because sue is undefined (implicit return)
+  console.log(e.name); // <- TypeError because sue is undefined (implicit function return)
 }
 
 console.log(global.name); // <- we have accidentaly added 'name' property to
@@ -122,7 +124,7 @@ Person1.prototype.getDescription = function() {
 };
 
 const sue1 = Person1('sue', 20);
-console.log(Object.getPrototypeOf(sue1)); // <- prints object
+console.log(Object.getPrototypeOf(sue1)); // <- prints default object (not something that we want to)
 
 try {
   console.log(sue1.getDescription());
@@ -149,5 +151,63 @@ Person2.prototype.getDescription = function() {
 const sue2 = Person2('sue', 20);
 console.log(Object.getPrototypeOf(sue2)); // <- prints the correct prototype object
 console.log(sue2.getDescription());       // <- works as expected
+
+})(); //------------------------------------------------------------
+
+(() => { //---------------------------------------------------------
+// BE AWARE OF 1.: using ES6 arrow funtion with constructor function that still
+// uses 'new' will not work because arrow function doesn't have a constructor
+// property that is necessary for this process.
+
+const Person1 = (name, age) => {
+  this.name = name;
+  this.age = age;
+}
+
+try {
+  const sue = new Person1('sue', 20);
+} catch (e) {
+  console.log(e.name); // <- TypeError Person is not a constructor function
+}
+
+// arrow function can't be used as a constructor function even is we improve it
+// as mentioned before to not use 'new' operator because there is not prototype
+// object created and associated to arrow functions
+
+const Person2 = (name, age) => {
+  const obj = Object.create(Person2.prototype);
+  obj.name = name;
+  obj.age = age;
+  return obj;
+}
+
+
+try {
+  const sue = new Person2('sue', 20);
+} catch (e) {
+  console.log(e.name); // <- TypeError: we can't pass undefined to the Object.create
+}                      // function (only an actual object or null are allowed)
+
+
+})(); //------------------------------------------------------------
+
+(() => { //---------------------------------------------------------
+// BE AWARE OF 2.: using arrow function to define method on a function prototype
+// will fail because arrow function doesn't have its own 'this' (you may say that
+// it takes this from its enclosing scope or that it uses lexical 'this')
+
+function Person(name, age) {
+  const obj = Object.create(Person.prototype);
+  obj.name = name;
+  obj.age = age;
+  return obj;
+}
+
+Person.prototype.getDescription = () => {
+  return `Person ${this.name}, ${this.age}`;
+};
+
+const sue = new Person('sue', 20);
+console.log(sue.getDescription()); // <- here we get "Person undefined, undefined"
 
 })(); //------------------------------------------------------------
