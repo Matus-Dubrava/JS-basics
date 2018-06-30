@@ -315,8 +315,8 @@ console.log(Object.getPrototypeOf(sue)); // <- in this case, sue's prototype is 
 // -----------------------------------------------------------------------------
 
 (() => {
-// BE AWARE OF 5.: we have solved the problem with missing 'new' operator when
-// expected by simply removing it from the equation completly, and while that is
+// BE AWARE OF 5.: we have solved the problem with expected but missing 'new' operator
+// by simply removing it from the equation completly, and while that is
 // the prefered way in may opinion, we can solve it also by checking whether the
 // function was invoked correcly with the 'new' operator, and if not then just add
 // it programatically
