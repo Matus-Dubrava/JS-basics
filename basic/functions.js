@@ -304,3 +304,110 @@ console.log(betterCounter6()); // <- prints 11
 console.log(betterCounter6()); // <- prints 12
 
 })();
+
+// -----------------------------------------------------------------------------
+
+(() => {
+// PASSING FUNCTION AS AN ARGUMENT TO ANOTHER FUNCTION
+// Since functions in JavaScript are just object, we can pass them to another
+// function as an argument (this is usually refered to as a callback). This
+// pattern allows us to simplify some tasks and make functions to focused, meaning
+// that the function will solve only one problem, which is necessary if we
+// want that function to be as reusable as possible.
+
+// Let's start with a simple example. Suppose that we have an array of integers and
+// we want to increase all of its entries by one.
+
+// APPROACH 1.: function that handles the whole task
+
+const increaseByOne = function(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] += 1;
+  }
+};
+
+const arr1 = [1, 2, 3];
+increaseByOne(arr1);
+console.log(arr1);  // <- prints [1, 2, 3];
+
+// While this is a valid solution, it has some downsides. Imagine that the task
+// changes and now you need to increase the entries not by one, but two. Well,
+// we could possibly invoke 'increaseByOne' function twice one a given array but
+// that would be terribly innefective.
+
+// Better approach would be to create more flexible function that would take any
+// number as its second argument and increase the provided array by that value.
+
+const increaseByX = function(arr, x) {
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] += x;
+  }
+};
+
+const arr2 = [1, 2, 3];
+increaseByX(arr2, 2);
+console.log(arr2);
+
+// As we can see, this is considerably better approach because next time when
+// someone asks us to increase the entries of an array by arbitrary value, we
+// can simply reuse this function. But what if the tasks changes and instead
+// of increasing those entries we will need to decrease them, then we are
+// back at the beginning because our function is still a bit more specific then
+// it needs to be.
+
+// It is always a good idea to design your function in a way that they are used
+// to solve only one task. Sure our function is solving only a single task, but
+// does it really? In fact, it solves two tasks at once. It iterates through
+// the array, that is the first task, and the second one is that it modifies
+// the entries of the array in some, rather specific, way.
+
+// Let's make it such that it can apply any logic to those entries by
+// taking an arbitrary function compatible with it an applying this function on
+// each entry (and let's give it a more general name, 'map' sounds about right).
+
+const map1 = function(arr, cb) {
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = cb(arr[i]);
+  }
+};
+
+const add100 = function(x) {
+  return x + 100;
+};
+
+const arr3 = [1, 2, 3];
+map1(arr3, add100);
+console.log(arr3);
+
+// If 'add100' will be reused anymore (which it probably won't since it is really
+// too specific), we can omit declaration of that function and pass an
+// anonymous function expression to our mapping function.
+
+const arr4 = [1, 2, 3];
+
+map1(arr4, function(x) {
+  return x + 100;
+});
+
+console.log(arr4);
+
+// And that is basically it. This function is actually a pretty useful one and
+// many programming languages include it in their core implementation, JavaScript
+// included (but it wasn't always the case). But unlike our implementation, JavaScript
+// has 'map' function as a method of array's prototype (Array.prototype.map) and
+// while it is used to solve the same task, it is quite different in how it achieves
+// that. Once crutial difference is that it doesn't mutate the provided array,
+// instead it returns a new modified one keeping the original intact.
+// Another difference is that it is a method, so it needs an array as its execution
+// context (our function doesn't work with and doesn't need any specific execution context).
+// There is also a difference in signature of these two functions but let's cut it
+// here, see some quick example and return to this topic when later.
+
+const arr5 = [1, 2, 3];
+const newArray = arr5.map(function(v) {
+  return v + 100;
+});
+
+console.log(newArray);
+
+})();
