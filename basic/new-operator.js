@@ -273,3 +273,24 @@ const sue4 = Person4('sue', 20);
 console.log(sue3);
 
 })(); //------------------------------------------------------------
+
+(() => { //---------------------------------------------------------
+// BE AWARE OF 4.: If we want to use a function to create a new object but we
+// don't want that object to have any prototype (not even the default object
+// prototype), we can use Object.create function again, but pass it 'null' this
+// time.
+
+function Person(name, age) {
+  const obj = Object.create(null);
+  obj.name = name;
+  obj.age = age;
+  return obj;
+}
+
+const sue = Person('sue', 20);
+console.log(sue);
+console.log(Object.getPrototypeOf(sue)); // <- in this case, sue's prototype is null
+                                         // not a custom and not even the default
+                                         // object prototype 
+
+})(); //------------------------------------------------------------
