@@ -1,6 +1,9 @@
 "use strict";
 
-(() => { //-----------------------------------------------------
+// PROBLEM: how to create a function that will produce new objects according to
+// our linking.
+
+(() => {
 // defining a constructor function
 function Person(name, age) {
   this.name = name;
@@ -24,9 +27,11 @@ function Person(name, age) {
 const sue = new Person('sue', 20);
 console.log(sue.getDescription());
 
-})(); //---------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // IMPROVED VERSION 1
 // PROBLEM with the previous example is that each time a new object is
 // created, the 'getDescription' method is copied to it. So we are
@@ -50,9 +55,11 @@ console.log(sue.getDescription());
 // Now there is only one instance of 'getDescription' method no
 // matter how many object we will create
 
-})(); //------------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // IMPROVED VERSION 2
 // PROBLEM with the previous example is that it needs to be called with
 // new operator and if we omit it then the function will still run
@@ -104,9 +111,11 @@ console.log(sue2.name);
 // now calling the Person function with new or without behaves the same
 // (well, almost)
 
-})(); //------------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // IMPROVED VERSION 3
 // PROBLEM with the improved version 2 is in the way in which we have
 // created the new object. That is, we have forgotten to tell it to
@@ -152,9 +161,11 @@ const sue2 = Person2('sue', 20);
 console.log(Object.getPrototypeOf(sue2)); // <- prints the correct prototype object
 console.log(sue2.getDescription());       // <- works as expected
 
-})(); //------------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // BE AWARE OF 1.: using ES6 arrow funtion with constructor function that still
 // uses 'new' will not work because arrow function doesn't have a constructor
 // property that is necessary for this process.
@@ -189,9 +200,11 @@ try {
 }                      // function (only an actual object or null are allowed)
 
 
-})(); //------------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // BE AWARE OF 2.: using arrow function to define a method on a function prototype
 // will fail because arrow function doesn't have its own 'this' (you may say that
 // it takes 'this' from its enclosing scope or that it uses lexical 'this')
@@ -221,9 +234,11 @@ this.name = 'enclosing-Sue';
 this.age = 'enclosing-20';
 console.log(sue.getDescription()); // <- prints "Person enclosing-Sue, enclosing-20"
 
-})(); //------------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // BE AWARE OF 3.: Things can be simplified if we don't need a custom
 // prototype (just be sure to understand that the newly created object will
 // still have the default object prototype)
@@ -272,9 +287,11 @@ const Person4 = (name, age) => ({ name, age });
 const sue4 = Person4('sue', 20);
 console.log(sue3);
 
-})(); //------------------------------------------------------------
+})();
 
-(() => { //---------------------------------------------------------
+// -----------------------------------------------------------------------------
+
+(() => {
 // BE AWARE OF 4.: If we want to use a function to create a new object but we
 // don't want that object to have any prototype (not even the default object
 // prototype), we can use Object.create function again, but pass it 'null' this
@@ -291,6 +308,6 @@ const sue = Person('sue', 20);
 console.log(sue);
 console.log(Object.getPrototypeOf(sue)); // <- in this case, sue's prototype is null
                                          // not a custom and not even the default
-                                         // object prototype 
+                                         // object prototype
 
-})(); //------------------------------------------------------------
+})();
