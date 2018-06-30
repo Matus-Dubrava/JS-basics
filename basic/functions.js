@@ -360,7 +360,7 @@ const API2 = (function() {
 console.log(API2.getLetters(someText));
 
 // You can say that we have drastically changed the underlying logic of
-// our API, but from the perspective of the external consumer, the API wasn't
+// our API but from the perspective of the external consumer the API wasn't
 // changed at all. All she sees in both version is just one function 'getLetters' that
 // expects a string and returns a filtered string that contains only letters.
 // On the other hand, if we have exposed '_isLetter' function or '_letters'
