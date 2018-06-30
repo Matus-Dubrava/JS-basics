@@ -516,7 +516,7 @@ setTimeout(sayHelloToSomeone.bind(null, 'sue'), 1000);
 
 // Another example, from the Node.js environment this time, would be to read a content of a
 // file. Tasks like this, you may say IO tasks, are considered slow and for
-// us to be able to handle them effectively, we can either run them concurrently in a different
+// us to be able to handle them efficiently, we can either run them concurrently in different
 // exection threads (well... we can't, JavaScipt is single threaded, sorry) or
 // we can run them asynchronously (this is where JavaScipt really shines).
 
