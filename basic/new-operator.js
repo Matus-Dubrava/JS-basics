@@ -280,7 +280,7 @@ console.log(sue3);
 
 // and to simplify it even more, we can omit return statement and curly braces
 // defining the function block but we need to wrap the object to be returned with
-// parenthesis so that it is recognized as an object an not as a function block
+// parenthesis so that it is recognized as an object and not as a function block
 
 const Person4 = (name, age) => ({ name, age });
 
@@ -295,7 +295,7 @@ console.log(sue3);
 // BE AWARE OF 4.: If we want to use a function to create a new object but we
 // don't want that object to have any prototype (not even the default object
 // prototype), we can use Object.create function again, but pass it 'null' this
-// time.
+// time instead of anything else.
 
 function Person(name, age) {
   const obj = Object.create(null);
