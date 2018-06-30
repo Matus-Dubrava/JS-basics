@@ -183,7 +183,7 @@ const Person2 = (name, age) => {
 
 
 try {
-  const sue = new Person2('sue', 20);
+  const sue = Person2('sue', 20);
 } catch (e) {
   console.log(e.name); // <- TypeError: we can't pass undefined to the Object.create
 }                      // function (only an actual object or null are allowed)
@@ -220,7 +220,5 @@ console.log(sue.getDescription()); // <- here we get "Person undefined, undefine
 this.name = 'enclosing-Sue';
 this.age = 'enclosing-20';
 console.log(sue.getDescription()); // <- prints "Person enclosing-Sue, enclosing-20"
-
-
 
 })(); //------------------------------------------------------------
