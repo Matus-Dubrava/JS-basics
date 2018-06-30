@@ -307,7 +307,7 @@ function Person(name, age) {
 const sue = Person('sue', 20);
 console.log(sue);
 console.log(Object.getPrototypeOf(sue)); // <- in this case, sue's prototype is null
-                                         // not a custom and not even the default
-                                         // object prototype
+                                         // not a custom one (obviously) and not even
+                                         // the default object prototype
 
 })();
