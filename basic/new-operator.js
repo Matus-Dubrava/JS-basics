@@ -182,8 +182,8 @@ try {
 }
 
 // arrow function can't be used as a constructor function even is we improve it
-// as mentioned before to not use 'new' operator because there is not prototype
-// object created and associated with arrow functions
+// as mentioned before to not use 'new' operator because there is no prototype
+// object created and associated with an arrow functions
 
 const Person2 = (name, age) => {
   const obj = Object.create(Person2.prototype); // <- Person2.prototype is undefined
