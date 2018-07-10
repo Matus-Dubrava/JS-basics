@@ -157,4 +157,103 @@
 
 // --------------------------------------------------------------------------
 // MIXIN PATTERN - COMBINING MULTIPLE OBJECTS TOGETHER
-//
+// It the previous section, we have looked on how we can make a copy of some
+// object. But what if we wanted to combine multiple object together to produce
+// one that will have properties of all the objects that were used to create
+// it? Here comes mixin pattern. The idea is pretty simple, just copy each property
+// of each source object one by one to the new object.
+
+// JavaScript already provides us with such utility and we have already seen it,
+// Object.assign(), which we have used in the previous section to make a copy of
+// a single object, but this method can take more than just one source object,
+// and the first argument, target object, doesn't need to be empty. If we pass
+// multiple source objects, then each of them will be mixed into the target, one
+// by one, and if there are any property collisions (two of those object have a
+// property with the same name) then the later one wins, overwriting the previous
+// one.
+
+// Let's look on a simple example of Object.assign.
+
+(() => {
+
+  const identity = { name: 'Sue', username: 'Sue123' };
+  const address = { state: 'Alaska', city: 'Noma' };
+  const anotherAddress = { state: 'Sweden', city: 'Malmo' };
+  const hobbies = { sports: ['skying', 'swimming'] };
+
+  const sue = Object.assign({}, identity, address, anotherAddress, hobbies);
+
+  console.log(sue);
+
+  sue.sports.push('tennis');
+
+  console.log(sue.sports);
+  console.log(hobbies.sports);
+
+})();
+
+// We can see that "sue" now has all properties of passed in objects, but
+// properties of "address" were overwriten by "anotherAddress" because
+// "anotherAddress" is passed to Object.assign after "address"
+
+// This approach is usually enough but suffers from the same problem as our
+// first "copy" function in the previous section, it produces only a shallow copy
+// so if make some in-place changes to object properties, e.g. we add new
+// a new sport to hobbies.sports using "push" method, then not only "sue" will
+// change, but the original "hobbies" object will change as well.
+
+// Let's try to use some knowledge from previous section and create a similar
+// deep mixin function.
+
+(() => {
+
+  const deepCopy = (source) => {
+    // if source is a primitive value, then just assign it to result
+    let result = source;
+
+    // if source is an object
+    if (typeof source === 'object') {
+      // distinguish between object and array
+      result = new source.constructor();
+
+      // same as before but we call a deep copy recursively with each assignment
+      Object.getOwnPropertyNames(source).forEach((prop) => {
+        result[prop] = deepCopy(source[prop]);
+      });
+    }
+
+    return result;
+  };
+
+  function mixin(...sources) {
+    const result = {};
+
+    sources.forEach((source) => {
+      const sourceCopy = deepCopy(source);
+
+      Object.getOwnPropertyNames(sourceCopy).forEach((prop) => {
+        result[prop] = sourceCopy[prop];
+      });
+    });
+
+    return result;
+  }
+
+  const identity = { name: 'Sue', username: 'Sue123' };
+  const address = { state: 'Alaska', city: 'Noma' };
+  const anotherAddress = { state: 'Sweden', city: 'Malmo' };
+  const hobbies = { sports: ['skying', 'swimming'] };
+
+  const sue = mixin(identity, address, anotherAddress, hobbies);
+
+  console.log(sue);
+
+  sue.sports.push('tennis');
+
+  console.log(sue.sports);
+  console.log(hobbies.sports);
+
+})();
+
+// If we now add some additional value to sue.sports, the original "hobbies"
+// object stays unmodified.
