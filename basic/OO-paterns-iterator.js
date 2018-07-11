@@ -18,8 +18,8 @@
 // resets the iteration pointer, so that we can iterate through the object
 // more than once.
 
-// First, we will see how to implement it using IIFE (immediatelly executed function
-// expression), wrapping data in a closure and providing consumer with some
+// Let's see how we can implement it using IIFE (immediatelly executed function
+// expression), wrapping data in a closure and providing users with some
 // interface (in our case that interface consists of the four, above mentioned, methods)
 // that allows them to manipulate the internally stored data.
 // If that sounds familiar to you, well it should, because it is the same pattern
@@ -68,7 +68,7 @@
 
 // This was rather contrieved example because we can easily iterate through an
 // array with just for-loop or array's "forEach" method but if the data
-// weren't a simple array, but let's say DOM, then there is no single, correct,
+// weren't a simple array, let's say DOM, then there is no single, correct,
 // one solution fits all way to achieve that.
 
 // ITERATING THROUGH DOM
@@ -153,4 +153,80 @@
   console.log(listIterator.getNext());   // <- a
   console.log(listIterator.getNext());   // <- null
 
-}());
+})();
+
+// Now that we have seen how to implement iterator pattern from scratch, it is
+// important to mention that JavaScript provides us with well known symbol
+// Symbol.iterator. When any object defines it, then JavaScript knows how
+// to handle that object in interation context (such as for-of loop, or spread operator).
+// So how do it work? It needs to be a function that returns object with "next" method,
+// which in turn returns object with two properties, value and done, each time it
+// is called. Value holds, well.. next value, and done is a boolean flag that
+// signals the end of iteration.
+
+// There are basically two approaches how to implement Symbol.iterator's function,
+// we can follow the above description step by step, or we can choose a little bit
+// different path using generator function with yield statement.
+
+// CLASSICAL APPROACH
+
+(() => {
+
+  const obj = {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4,
+    [Symbol.iterator]() {
+      let keys = Object.keys(this),
+          i = 0;
+
+      return {
+        // note the usage of arrow function here to prevent
+        // execution context switching so that "this"
+        // points to "obj", otherwise it would point to the
+        // object that is being returned
+        next: () => {
+          const value = this[keys[i]];
+          i += 1;
+          const done = i > keys.length;
+
+          return { value, done };
+        }
+      };
+    }
+  };
+
+  for (const val of obj) { console.log(val); } // <- 1, 2, 3, 4
+
+  console.log([...obj]); // <- [1, 2, 3, 4]
+
+})();
+
+// GENERATOR FUNCTION APPROACH
+
+(() => {
+
+  const obj = {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4,
+    *[Symbol.iterator]() {
+      const keys = Object.keys(this);
+
+      // note that we can't use "forEach" method here
+      // because "yield" statement can be used only
+      // direcly inside of a generator function (denoted by *)
+      // where "forEach" is not such a function
+      for (let i = 0; i < keys.length; i++) {
+        yield this[keys[i]];
+      }
+    }
+  };
+
+  for (const val of obj) { console.log(val); } // <- 1, 2, 3, 4
+
+  console.log([...obj]); // <- [1, 2, 3, 4]
+
+})();
