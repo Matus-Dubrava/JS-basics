@@ -2,7 +2,8 @@
 // The idea behind singleton pattern is simple, we have some class and each time
 // we instantiate it, instead of getting new object we receive a pointer to the
 // object that was produced by this class the first time. Or in other words,
-// class can produce only one unique object.
+// singleton pattern forbids us to instantiate class multiple times and serves
+// as a global access point to that single instance.
 
 // Now, we don't have classes in JavaScript and if we want to create a single, let's
 // say configuration, object, all we have to do is use object literals to create
@@ -80,43 +81,10 @@
 // if we change one, those changes are visible across all the produced objects
 // as well.
 
-// In some cases, this behaviour might be prefferable, in others not. So how
-// can we do something about that? One solution is to make the instance object
-// immutable so that nothing can change it once it has been created.
-
-(() => {
-
-  const Singleton = (() => {
-    // closure over instance
-    let instance = undefined;
-
-    // can't use arrow function here, as it doesn't work as constructor
-    return function Singleton() {
-      if (instance) { return instance; }
-
-      this.start = 0;
-      this.version = '1.1.2';
-      instance = this;
-
-      // freeze the instace, preventing future changes
-      Object.freeze(instance);
-    };
-  })();
-
-  const sing1 = new Singleton();
-  const sing2 = new Singleton();
-
-  console.log(sing1);
-  console.log(sing2);
-  console.log(sing1 === sing2);
-
-})();
-
-// By using Object.freeze, we are able to prevent any changes to the instance
-// object, so even if someone tries to modify, let's say, "sing1" in our example,
-// such action will fail (silenty or with an error, depending on the environment in
-// which that code is run).
-
-// Word of caution, Object.freeze ensures only what is called a shallow immutability
-// (similar to making a shallow copy), which means that objects that are stored
-// in some property of a frozen object can still be mutated.
+// Note that singleton pattern is by no means the preffered way of solving problems,
+// and is usually frown upon by majority of programmers. Main arguments against
+// using it are that, from its definition, it serves as a global access point
+// to that one instance, so basically it is kind of a global variable and we
+// shouldn't be using global variables. Another one might be that we can't be sure,
+// ahead of time, whether we won't actually need to make multiple instances of that class
+// one day.
