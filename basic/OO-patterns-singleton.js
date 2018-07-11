@@ -45,7 +45,7 @@
 // but we will consider only one of them which uses IIFE (imediatelly executed
 // function expression). The idea is pretty similar to the one that is
 // used to create a module in JavaScript, well it is actually the same idea,
-// so technically, there is not difference between module a singleton
+// so technically, there is no difference between module and singleton in
 // JavaScript.
 
 (() => {
@@ -112,7 +112,7 @@
 
 })();
 
-// Using Object.freeze, we are able to prevent any changes to the instance
+// By using Object.freeze, we are able to prevent any changes to the instance
 // object, so even if someone tries to modify, let's say, "sing1" in our example,
 // such action will fail (silenty or with an error, depending on the environment in
 // which that code is run).
